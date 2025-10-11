@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GardenSpace - Community Plots</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body {
+  background: url('https://images.unsplash.com/photo-1592928302378-5c8c99c06f39?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+}
+.card {
+  background-color: #ffffff; /* fully opaque */
+  color: #000; /* text inside card black */
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.2);}
+.navbar, .footer { background-color: #0b3c17;}
+.card img { height: 180px; object-fit: cover; border-radius: 4px;}
+.search-bar, .form-select {
+  background-color: #ffffff; /* white background */
+  color: #000; /* black text */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.search-bar::placeholder {
+  color: rgba(0,0,0,0.5); /* darker placeholder */
+}
+
+/* Footer */
+.footer {
+  color: #fff; /* keep footer white if background dark */
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+<div class="container">
+  <a class="navbar-brand" href="#">🌱 GardenSpace</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">My Reservations</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
+      <li class="nav-item"><button class="btn btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#adminModal">Admin Panel</button></li>
+    </ul>
+  </div>
+</div>
+</nav>
+
+<div class="container mt-4">
+  <div class="row g-3 mb-4">
+    <div class="col-md-8">
+      <input id="searchInput" type="text" class="form-control search-bar" placeholder="Search by plot name, owner, or location...">
+    </div>
+    <div class="col-md-4">
+      <select id="filterSelect" class="form-select">
+        <option value="all">Show All</option>
+        <option value="available">Available</option>
+        <option value="reserved">Reserved</option>
+      </select>
+    </div>
+  </div>
+  <div id="plotsContainer" class="row g-4"></div>
+</div>
+
+<div class="footer">© 2025 GardenSpace — Manage your local green plots easily.</div>
+
+<!-- Reserve Modal -->
+<div class="modal fade" id="reserveModal" tabindex="-1">
+<div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Reserve Plot</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+    <form id="reserveForm">
+      <input type="hidden" id="reservePlotId">
+      <div class="mb-3"><label class="form-label">Your Name</label><input type="text" id="userName" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">Your Email</label><input type="email" id="userEmail" class="form-control" required></div>
+      <button type="submit" class="btn btn-success w-100">Confirm Reservation</button>
+    </form>
+  </div>
+</div></div></div>
+
+<!-- Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+<div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Send Message</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+    <form id="messageForm">
+      <input type="hidden" id="messagePlotId">
+      <div class="mb-3"><label class="form-label">Your Message</label><textarea class="form-control" id="messageText" rows="4" required></textarea></div>
+      <button type="submit" class="btn btn-primary w-100">Send Message</button>
+    </form>
+  </div>
+</div></div></div>
+
+<!-- Admin Modal -->
+<div class="modal fade" id="adminModal" tabindex="-1">
+<div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Add New Garden Plot</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+    <form id="adminForm">
+      <div class="mb-3"><label>Plot Title</label><input type="text" id="newTitle" class="form-control" required></div>
+      <div class="mb-3"><label>Owner</label><input type="text" id="newOwner" class="form-control" required></div>
+      <div class="mb-3"><label>Image URL or Path</label><input type="text" id="newImg" class="form-control" required></div>
+      <div class="mb-3"><label>Location</label><input type="text" id="newLocation" class="form-control" required></div>
+      <div class="mb-3"><label>Status</label>
+        <select id="newStatus" class="form-select">
+          <option value="available">Available</option>
+          <option value="reserved">Reserved</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-warning w-100">Add Plot</button>
+    </form>
+  </div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const plots = [
+  {id:1,title:"Plot A1 - Sunflower Field",owner:"John Doe",status:"available",img:"https://images.openai.com/thumbnails/url/KtuukXicu5meUVJSUGylr5-al1xUWVCSmqJbkpRnoJdeXJJYkpmsl5yfq5-Zm5ieWmxfaAuUsXL0S7F0Tw7MKMzMyNMNNHXycskODUrMC3AxS_IpCEitzEq38MpxLjBzykiNTw0xCg9yVCu2NTQAAA_nJPA",location:"North Park"},
+  {id:2,title:"Plot B2 - Vegetable Patch",owner:"Maria Lopez",status:"reserved",img:"https://images.openai.com/thumbnails/url/MiKjmHicu5meUVJSUGylr5-al1xUWVCSmqJbkpRnoJdeXJJYkpmsl5yfq5-Zm5ieWmxfaAuUsXL0S7F0Tw729goO0q30cEoMKqrUNfEySHdLsTBM8akszi1Jysz2zM8KMUiPcPI1TSsuVyu2NTQAAAI9JP4",location:"East Garden"},
+  {id:3,title:"Plot C3 - Herb Garden",owner:"Liam Smith",status:"available",img:"images/3.jpg",location:"West Field"},
+  {id:4,title:"Plot D4 - Strawberry Beds",owner:"Amira Khan",status:"reserved",img:"https://images.openai.com/thumbnails/url/gsbCWXicu5meUVJSUGylr5-al1xUWVCSmqJbkpRnoJdeXJJYkpmsl5yfq5-Zm5ieWmxfaAuUsXL0S7F0Tw7OLnErDjLxTU8PjM8ozCsP9o0ycjMx8PHLcS2vCooICDMNisouLU8ydfZyVCu2NTQAABecJRs",location:"South Green"},
+  {id:5,title:"Plot E5 - Tomato Lane",owner:"Noah Kim",status:"available",img:"images/5.jpg",location:"North Park"},
+  {id:6,title:"Plot F6 - Rose Garden",owner:"Ella Brown",status:"available",img:"images/4.jpg",location:"West Field"}
+];
+
+const container = document.getElementById("plotsContainer");
+const searchInput = document.getElementById("searchInput");
+const filterSelect = document.getElementById("filterSelect");
+
+// Render the plot cards
+function renderPlots(data){
+  container.innerHTML="";
+  if(data.length===0){
+    container.innerHTML=`<p class='text-center text-white mt-4'>No plots found 😔</p>`;
+    return;
+  }
+  data.forEach(plot=>{
+    const card=document.createElement("div");
+    card.className="col-md-4";
+    card.innerHTML=`
+      <div class="card shadow-sm">
+        <img src="${plot.img}" alt="Garden Plot Image" class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">${plot.title}</h5>
+          <p class="card-text">
+            <strong>Owner:</strong> ${plot.owner}<br>
+            <strong>Location:</strong> ${plot.location}<br>
+            <strong>Status:</strong> <span class="badge ${plot.status==="available"?"bg-success":"bg-secondary"}">${plot.status}</span>
+          </p>
+          <button class="btn ${plot.status==="available"?"btn-success":"btn-secondary"} w-100 mb-2" ${plot.status!=="available"?"disabled":""} onclick="openReserveModal(${plot.id})">${plot.status==="available"?"Reserve":"Reserved"}</button>
+          <button class="btn btn-primary w-100" onclick="openMessageModal(${plot.id})">Send Message</button>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// Filter plots based on search and status
+function filterPlots(){
+  const searchValue=searchInput.value.toLowerCase();
+  const filterValue=filterSelect.value;
+  const filtered=plots.filter(plot=>{
+    const matchSearch = plot.title.toLowerCase().includes(searchValue) || plot.owner.toLowerCase().includes(searchValue) || plot.location.toLowerCase().includes(searchValue);
+    const matchFilter = filterValue==="all" || plot.status===filterValue;
+    return matchSearch && matchFilter;
+  });
+  renderPlots(filtered);
+}
+
+// Reserve modal
+function openReserveModal(id){
+  const plot=plots.find(p=>p.id===id);
+  if(!plot) return;
+  document.getElementById("reservePlotId").value=id;
+  const reserveModal=new bootstrap.Modal(document.getElementById("reserveModal"));
+  reserveModal.show();
+}
+
+// Message modal
+function openMessageModal(id){
+  document.getElementById("messagePlotId").value=id;
+  document.getElementById("messageText").value="";
+  const messageModal=new bootstrap.Modal(document.getElementById("messageModal"));
+  messageModal.show();
+}
+
+// Admin add plot
+function openAdminModal(){
+  const adminModal=new bootstrap.Modal(document.getElementById("adminModal"));
+  adminModal.show();
+}
+
+// Event listeners
+searchInput.addEventListener("input",filterPlots);
+filterSelect.addEventListener("change",filterPlots);
+
+// Reserve form
+document.getElementById("reserveForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  const id=parseInt(document.getElementById("reservePlotId").value);
+  const plot=plots.find(p=>p.id===id);
+  if(plot && plot.status==="available"){
+    plot.status="reserved";
+    alert(`✅ You have reserved ${plot.title}`);
+    renderPlots(plots);
+    bootstrap.Modal.getInstance(document.getElementById("reserveModal")).hide();
+  }
+});
+
+// Message form
+document.getElementById("messageForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  const id=parseInt(document.getElementById("messagePlotId").value);
+  const message=document.getElementById("messageText").value;
+  alert(`💌 Message sent regarding plot ${id}:\n${message}`);
+  bootstrap.Modal.getInstance(document.getElementById("messageModal")).hide();
+});
+
+// Admin form
+document.getElementById("adminForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  const newPlot={
+    id: plots.length+1,
+    title: document.getElementById("newTitle").value,
+    owner: document.getElementById("newOwner").value,
+    img: document.getElementById("newImg").value,
+    location: document.getElementById("newLocation").value,
+    status: document.getElementById("newStatus").value
+  };
+  plots.push(newPlot);
+  renderPlots(plots);
+  bootstrap.Modal.getInstance(document.getElementById("adminModal")).hide();
+  document.getElementById("adminForm").reset();
+});
+
+// Initial render
+renderPlots(plots);
+</script>
