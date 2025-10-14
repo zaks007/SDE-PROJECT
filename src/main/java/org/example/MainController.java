@@ -12,6 +12,8 @@ public class MainController {
     }
 
     //My first push!!!
+    //goodwin's commit
+}
     //Goodness's push!!
     public void registerUser(String name, String role) {
         EntityManager em = JPAUtil.getEntityManager();
