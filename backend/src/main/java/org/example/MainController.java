@@ -1,8 +1,6 @@
 package org.example;
 
 import javafx.fxml.FXML;
-import org.example.User;
-import org.example.JPAUtil;
 import jakarta.persistence.EntityManager;
 
 public class MainController {
@@ -12,7 +10,7 @@ public class MainController {
     }
 
     //My first push!!!
-    //goodwin's commit
+    //goodwin's commgit it
 }
     //Goodness's push!!
     public void registerUser(String name, String role) {
@@ -26,3 +24,4 @@ public class MainController {
         em.close();
     }
 }
+//Comment added

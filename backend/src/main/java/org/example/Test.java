@@ -1,7 +1,5 @@
 package org.example;
 
-import org.example.User;
-import org.example.JPAUtil;
 import jakarta.persistence.EntityManager;
 
 public class Test {
