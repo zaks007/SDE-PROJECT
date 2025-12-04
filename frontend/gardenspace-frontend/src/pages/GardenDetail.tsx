@@ -10,7 +10,8 @@ import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Leaf, Users, Calendar, CreditCard, MessageCircle } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { MapPin, Leaf, Users, Calendar, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Garden {
@@ -48,15 +49,6 @@ const GardenDetail = () => {
   const [expDate, setExpDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // --- HUF currency formatting ---
-  const currency = 'HUF';
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('hu-HU', {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 0, // no decimals for HUF
-    }).format(price);
 
   useEffect(() => {
     if (id) {
@@ -202,22 +194,43 @@ const GardenDetail = () => {
       
       <div className="container max-w-6xl mx-auto py-12 px-4">
         {/* Garden Images */}
-        <div className="relative h-96 rounded-xl overflow-hidden mb-8 shadow-[var(--shadow-medium)]">
+        <div className="relative mb-8">
           {garden.images && garden.images.length > 0 ? (
-            <img
-              src={garden.images[0]}
-              alt={garden.name}
-              className="w-full h-full object-cover"
-            />
+            <Carousel className="w-full">
+              <CarouselContent>
+                {garden.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative h-96 rounded-xl overflow-hidden shadow-[var(--shadow-medium)]">
+                      <img
+                        src={image}
+                        alt={`${garden.name} - Image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {garden.images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-4" />
+                  <CarouselNext className="right-4" />
+                </>
+              )}
+            </Carousel>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-sage to-forest flex items-center justify-center">
+            <div className="h-96 rounded-xl overflow-hidden shadow-[var(--shadow-medium)] bg-gradient-to-br from-sage to-forest flex items-center justify-center">
               <Leaf className="h-32 w-32 text-white/30" />
             </div>
           )}
           {garden.available_plots === 0 && (
-            <Badge className="absolute top-4 right-4 bg-destructive text-lg py-2 px-4">
+            <Badge className="absolute top-4 right-4 bg-destructive text-lg py-2 px-4 z-10">
               Fully Booked
             </Badge>
+          )}
+          {garden.images && garden.images.length > 1 && (
+            <div className="text-center mt-2 text-sm text-muted-foreground">
+              {garden.images.length} photos
+            </div>
           )}
         </div>
 
@@ -275,25 +288,20 @@ const GardenDetail = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-semibold text-lg">{owner.full_name}</p>
-                      <p className="text-sm text-muted-foreground">{owner.email}</p>
+                      <a 
+                        href={`mailto:${owner.email}`}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        {owner.email}
+                      </a>
                     </div>
                     {user && user.id !== owner.id && (
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={() => navigate(`/profile/${owner.id}`)}
-                          variant="outline"
-                        >
-                          View Profile
-                        </Button>
-                        <Button
-                          onClick={() => navigate('/messages', { 
-                            state: { recipientId: owner.id, recipientName: owner.full_name } 
-                          })}
-                        >
-                          <MessageCircle className="mr-2 h-4 w-4" />
-                          Message Owner
-                        </Button>
-                      </div>
+                      <Button
+                        onClick={() => navigate(`/profile/${owner.id}`)}
+                        variant="outline"
+                      >
+                        View Profile
+                      </Button>
                     )}
                   </div>
                 </CardContent>
@@ -305,8 +313,8 @@ const GardenDetail = () => {
           <div className="lg:col-span-1">
             <Card className="sticky top-24 shadow-[var(--shadow-medium)]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {formatPrice(garden.base_price_per_month)}/month
+                <CardTitle>
+                  {garden.base_price_per_month} Ft/month
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
@@ -335,7 +343,7 @@ const GardenDetail = () => {
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Base price</span>
-                    <span>{formatPrice(garden.base_price_per_month)}/mo</span>
+                    <span>{garden.base_price_per_month} Ft/mo</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Duration</span>
@@ -343,7 +351,7 @@ const GardenDetail = () => {
                   </div>
                   <div className="border-t pt-2 flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span className="text-primary">{formatPrice(totalPrice)}</span>
+                    <span className="text-primary">{totalPrice} Ft</span>
                   </div>
                 </div>
 
@@ -431,7 +439,7 @@ const GardenDetail = () => {
                       <div className="bg-muted p-4 rounded-lg">
                         <div className="flex justify-between font-semibold">
                           <span>Total Amount</span>
-                          <span className="text-primary">{formatPrice(totalPrice)}</span>
+                          <span className="text-primary">{totalPrice} Ft</span>
                         </div>
                       </div>
                       <Button type="submit" className="w-full" disabled={isBooking}>
