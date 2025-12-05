@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="68200781-045f-4008-afaa-a4345929cbe6" name="Changes" comment="org folder deleted in backend">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/gardenspace-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/gardenspace-frontend/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +54,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "backend",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/goodwin",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
