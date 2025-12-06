@@ -44,8 +44,6 @@ public class GardenService {
             garden.setName(gardenDetails.getName());
             garden.setDescription(gardenDetails.getDescription());
             garden.setAddress(gardenDetails.getAddress());
-            garden.setLatitude(gardenDetails.getLatitude());
-            garden.setLongitude(gardenDetails.getLongitude());
             garden.setTotalPlots(gardenDetails.getTotalPlots());
             garden.setAvailablePlots(gardenDetails.getAvailablePlots());
             garden.setBasePricePerMonth(gardenDetails.getBasePricePerMonth());
