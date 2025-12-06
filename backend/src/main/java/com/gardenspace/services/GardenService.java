@@ -12,33 +12,33 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class GardenService {
-    
+
     private final GardenRepository gardenRepository;
-    
+
     public List<Garden> getAllGardens() {
         return gardenRepository.findAll();
     }
-    
+
     public Optional<Garden> getGardenById(UUID id) {
         return gardenRepository.findById(id);
     }
-    
+
     public List<Garden> getGardensByOwner(UUID ownerId) {
         return gardenRepository.findByOwnerId(ownerId);
     }
-    
+
     public List<Garden> getAvailableGardens() {
         return gardenRepository.findByAvailablePlotsGreaterThan(0);
     }
-    
+
     public List<Garden> searchGardens(String query) {
         return gardenRepository.findByNameContainingIgnoreCase(query);
     }
-    
+
     public Garden createGarden(Garden garden) {
         return gardenRepository.save(garden);
     }
-    
+
     public Optional<Garden> updateGarden(UUID id, Garden gardenDetails) {
         return gardenRepository.findById(id).map(garden -> {
             garden.setName(gardenDetails.getName());
@@ -53,7 +53,7 @@ public class GardenService {
             return gardenRepository.save(garden);
         });
     }
-    
+
     public boolean deleteGarden(UUID id) {
         if (gardenRepository.existsById(id)) {
             gardenRepository.deleteById(id);

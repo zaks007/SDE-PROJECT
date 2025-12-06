@@ -9,12 +9,12 @@ import java.util.UUID;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
-    
+
     List<Booking> findByUserId(UUID userId);
-    
+
     List<Booking> findByGardenId(UUID gardenId);
-    
+
     List<Booking> findByUserIdAndStatus(UUID userId, String status);
-    
+
     List<Booking> findByGardenIdAndStatus(UUID gardenId, String status);
 }

@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @Repository
 public interface GardenRepository extends JpaRepository<Garden, UUID> {
-    
+
     List<Garden> findByOwnerId(UUID ownerId);
-    
+
     List<Garden> findByAvailablePlotsGreaterThan(Integer minPlots);
-    
+
     List<Garden> findByNameContainingIgnoreCase(String name);
 }
