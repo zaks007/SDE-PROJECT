@@ -1,68 +1,124 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 42 45% 97%;
+    --foreground: 145 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 145 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 145 30% 15%;
+
+    --primary: 142 45% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 145 25% 88%;
+    --secondary-foreground: 145 30% 15%;
+
+    --muted: 145 15% 92%;
+    --muted-foreground: 145 15% 45%;
+
+    --accent: 24 85% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 145 20% 85%;
+    --input: 145 20% 85%;
+    --ring: 142 45% 35%;
+
+    --radius: 0.75rem;
+
+    /* Custom garden theme colors */
+    --sage: 145 25% 75%;
+    --earth: 30 35% 45%;
+    --forest: 142 60% 25%;
+    --terracotta: 15 75% 60%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(142 45% 35%) 0%, hsl(142 60% 25%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(145 15% 98%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(145 30% 15% / 0.1);
+    --shadow-medium: 0 8px 30px -6px hsl(145 30% 15% / 0.15);
+    
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 145 30% 15%;
+    --sidebar-primary: 142 45% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 145 25% 88%;
+    --sidebar-accent-foreground: 145 30% 15%;
+    --sidebar-border: 145 20% 85%;
+    --sidebar-ring: 142 45% 35%;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    --background: 145 30% 8%;
+    --foreground: 145 15% 95%;
+
+    --card: 145 25% 12%;
+    --card-foreground: 145 15% 95%;
+
+    --popover: 145 25% 12%;
+    --popover-foreground: 145 15% 95%;
+
+    --primary: 142 50% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 145 20% 20%;
+    --secondary-foreground: 145 15% 95%;
+
+    --muted: 145 20% 18%;
+    --muted-foreground: 145 15% 65%;
+
+    --accent: 24 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 145 20% 25%;
+    --input: 145 20% 25%;
+    --ring: 142 50% 45%;
+
+    --sage: 145 25% 35%;
+    --earth: 30 30% 35%;
+    --forest: 142 50% 30%;
+    --terracotta: 15 70% 50%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(142 50% 30%) 0%, hsl(142 60% 20%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(145 25% 12%) 0%, hsl(145 25% 15%) 100%);
+    
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
+
+    --sidebar-background: 145 25% 10%;
+    --sidebar-foreground: 145 15% 95%;
+    --sidebar-primary: 142 50% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 145 20% 20%;
+    --sidebar-accent-foreground: 145 15% 95%;
+    --sidebar-border: 145 20% 25%;
+    --sidebar-ring: 142 50% 45%;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
