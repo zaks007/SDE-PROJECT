@@ -20,14 +20,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
+  // 🔄 Sync Supabase user with Spring Boot backend
+  const syncUserWithBackend = async (user: User) => {
+    try {
+      await fetch("http://localhost:8081/api/users/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: user.id,
+          email: user.email,
+          fullName: user.user_metadata.full_name || user.email,
+          avatarUrl: user.user_metadata.avatar_url || ""
+        })
+      });
+    } catch (error) {
+      console.error("Failed to sync user with backend:", error);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = authHelpers.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
-      // Check admin status when user changes
+
       if (session?.user) {
+        syncUserWithBackend(session.user);
+
         setTimeout(() => {
           getUserRoles(session.user.id).then(({ roles }) => {
             setIsAdmin(roles.includes('admin'));
@@ -42,8 +63,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     authHelpers.getCurrentUser().then(({ user, session }) => {
       setSession(session);
       setUser(user);
-      
+
       if (user) {
+        syncUserWithBackend(user);
+
         getUserRoles(user.id).then(({ roles }) => {
           setIsAdmin(roles.includes('admin'));
           setIsLoading(false);

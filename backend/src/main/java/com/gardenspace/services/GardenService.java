@@ -1,6 +1,7 @@
 package com.gardenspace.services;
 
 import com.gardenspace.models.Garden;
+import com.gardenspace.repositories.BookingRepository;
 import com.gardenspace.repositories.GardenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.UUID;
 public class GardenService {
 
     private final GardenRepository gardenRepository;
+    private final BookingRepository bookingRepository;
+
 
     public List<Garden> getAllGardens() {
         return gardenRepository.findAll();
@@ -55,10 +58,15 @@ public class GardenService {
     }
 
     public boolean deleteGarden(UUID id) {
-        if (gardenRepository.existsById(id)) {
-            gardenRepository.deleteById(id);
-            return true;
+        if (!gardenRepository.existsById(id)) {
+            return false;
         }
-        return false;
+
+        // NEW — delete all bookings linked to this garden
+        BookingRepository.deleteByGardenId(id);
+
+        gardenRepository.deleteById(id);
+        return true;
     }
+
 }

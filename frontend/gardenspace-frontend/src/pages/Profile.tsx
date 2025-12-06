@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+
 import Navbar from '@/components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+
 import { Calendar, MapPin, Euro } from 'lucide-react';
 import { toast } from 'sonner';
+
+// ❗ Removed the bad import: import { bookingApi } from "@/api/api";
 
 interface Booking {
   id: string;
@@ -27,6 +31,7 @@ interface Booking {
 const Profile = () => {
   const { user, isAdmin, isLoading } = useAuth();
   const navigate = useNavigate();
+
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [fullName, setFullName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -53,6 +58,7 @@ const Profile = () => {
         .single();
 
       if (error) throw error;
+
       if (data) setFullName(data.full_name);
     } catch (error) {
       console.error('Failed to load profile');
@@ -63,14 +69,12 @@ const Profile = () => {
     try {
       const { data, error } = await supabase
         .from('bookings')
-        .select(`
-          *,
-          garden:gardens(name, address)
-        `)
+        .select(`*, garden:gardens(name, address)`)
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
       setBookings(data || []);
     } catch (error) {
       toast.error('Failed to load bookings');
@@ -132,7 +136,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container max-w-5xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Info */}
@@ -142,6 +146,7 @@ const Profile = () => {
                 <CardTitle>Profile</CardTitle>
                 <CardDescription>Manage your account information</CardDescription>
               </CardHeader>
+
               <CardContent>
                 <form onSubmit={handleUpdateProfile} className="space-y-4">
                   <div className="space-y-2">
@@ -153,6 +158,7 @@ const Profile = () => {
                       required
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -162,14 +168,14 @@ const Profile = () => {
                       className="bg-muted"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label>Account Type</Label>
-                    <div>
-                      <Badge variant={isAdmin ? 'default' : 'secondary'}>
-                        {isAdmin ? 'Admin' : 'User'}
-                      </Badge>
-                    </div>
+                    <Badge variant={isAdmin ? 'default' : 'secondary'}>
+                      {isAdmin ? 'Admin' : 'User'}
+                    </Badge>
                   </div>
+
                   <Button type="submit" className="w-full" disabled={isSaving}>
                     {isSaving ? 'Saving...' : 'Save Changes'}
                   </Button>
@@ -185,6 +191,7 @@ const Profile = () => {
                 <CardTitle>My Bookings</CardTitle>
                 <CardDescription>View and manage your garden reservations</CardDescription>
               </CardHeader>
+
               <CardContent>
                 {bookings.length === 0 ? (
                   <div className="text-center py-12">
@@ -207,6 +214,7 @@ const Profile = () => {
                                 {booking.garden.address}
                               </p>
                             </div>
+
                             <Badge
                               variant={
                                 booking.status === 'confirmed'
@@ -219,11 +227,15 @@ const Profile = () => {
                               {booking.status}
                             </Badge>
                           </div>
+
                           <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                             <div>
                               <span className="text-muted-foreground">Duration:</span>
-                              <p className="font-semibold">{booking.duration_months} months</p>
+                              <p className="font-semibold">
+                                {booking.duration_months} months
+                              </p>
                             </div>
+
                             <div>
                               <span className="text-muted-foreground">Total:</span>
                               <p className="font-semibold flex items-center gap-1">
@@ -231,12 +243,14 @@ const Profile = () => {
                                 {booking.total_price}
                               </p>
                             </div>
+
                             <div>
                               <span className="text-muted-foreground">Start:</span>
                               <p className="font-semibold">
                                 {new Date(booking.start_date).toLocaleDateString()}
                               </p>
                             </div>
+
                             <div>
                               <span className="text-muted-foreground">End:</span>
                               <p className="font-semibold">
@@ -244,6 +258,7 @@ const Profile = () => {
                               </p>
                             </div>
                           </div>
+
                           {booking.status === 'confirmed' && (
                             <Button
                               variant="destructive"

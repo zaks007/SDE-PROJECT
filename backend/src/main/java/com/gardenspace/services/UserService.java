@@ -38,4 +38,10 @@ public class UserService {
             return userRepository.save(user);
         });
     }
+
+    public User syncUser(User incomingUser) {
+        return userRepository.findById(incomingUser.getId())
+                .orElseGet(() -> userRepository.save(incomingUser));
+    }
+
 }

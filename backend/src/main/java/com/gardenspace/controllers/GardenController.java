@@ -13,53 +13,62 @@ import java.util.UUID;
 @RequestMapping("/api/gardens")
 @RequiredArgsConstructor
 public class GardenController {
-    
+
     private final GardenService gardenService;
-    
+
     @GetMapping
-    public List<Garden> getAllGardens() {
+    public List<Garden> getGardens(@RequestParam(required = false) UUID ownerId) {
+        if (ownerId != null) {
+            return gardenService.getGardensByOwner(ownerId);
+        }
         return gardenService.getAllGardens();
     }
-    
+
+    @GetMapping("/owner/{ownerId}")
+    public List<Garden> getGardensByOwner(@PathVariable UUID ownerId) {
+        return gardenService.getGardensByOwner(ownerId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Garden> getGardenById(@PathVariable UUID id) {
         return gardenService.getGardenById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @GetMapping("/available")
     public List<Garden> getAvailableGardens() {
         return gardenService.getAvailableGardens();
     }
-    
+
     @GetMapping("/search")
     public List<Garden> searchGardens(@RequestParam String query) {
         return gardenService.searchGardens(query);
     }
-    
-    @GetMapping("/owner/{ownerId}")
-    public List<Garden> getGardensByOwner(@PathVariable UUID ownerId) {
-        return gardenService.getGardensByOwner(ownerId);
-    }
-    
+
     @PostMapping
     public Garden createGarden(@RequestBody Garden garden) {
         return gardenService.createGarden(garden);
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<Garden> updateGarden(@PathVariable UUID id, @RequestBody Garden garden) {
+    public ResponseEntity<Garden> updateGarden(
+            @PathVariable UUID id, @RequestBody Garden garden
+    ) {
         return gardenService.updateGarden(id, garden)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGarden(@PathVariable UUID id) {
-        if (gardenService.deleteGarden(id)) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteGarden(@PathVariable UUID id) {
+        boolean deleted = gardenService.deleteGarden(id);
+
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 SUCCESS
+        } else {
+            return ResponseEntity.status(404).body("Garden not found");
         }
-        return ResponseEntity.notFound().build();
     }
+
 }

@@ -29,21 +29,26 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-6 ml-auto">
-          <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link
+            to="/"
+            className="text-sm font-medium transition-colors hover:text-primary"
+          >
             Browse Gardens
           </Link>
-          
+
           {user ? (
             <>
-              <Link to="/messages" className="text-sm font-medium transition-colors hover:text-primary">
-                Messages
-              </Link>
+              {/* Messages Removed */}
+
               {isAdmin && (
-                <Link to="/admin" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Admin
+                <Link
+                  to="/admin"
+                  className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
+                >
+                  <LayoutDashboard className="h-4 w-4" /> Admin
                 </Link>
               )}
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
@@ -63,12 +68,10 @@ const Navbar = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate('/profile')}>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                    <User className="mr-2 h-4 w-4" /> Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={signOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    <LogOut className="mr-2 h-4 w-4" /> Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

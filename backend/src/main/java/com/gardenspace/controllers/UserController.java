@@ -42,4 +42,11 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/sync")
+    public ResponseEntity<User> syncUser(@RequestBody User user) {
+        User syncedUser = userService.syncUser(user);
+        return ResponseEntity.ok(syncedUser);
+    }
+
 }
