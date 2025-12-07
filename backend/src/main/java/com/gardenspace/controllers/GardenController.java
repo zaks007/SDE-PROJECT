@@ -53,7 +53,8 @@ public class GardenController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Garden> updateGarden(
-            @PathVariable UUID id, @RequestBody Garden garden
+            @PathVariable UUID id,
+            @RequestBody Garden garden
     ) {
         return gardenService.updateGarden(id, garden)
                 .map(ResponseEntity::ok)
@@ -65,10 +66,9 @@ public class GardenController {
         boolean deleted = gardenService.deleteGarden(id);
 
         if (deleted) {
-            return ResponseEntity.noContent().build(); // 204 SUCCESS
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(404).body("Garden not found");
         }
     }
-
 }

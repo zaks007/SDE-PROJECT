@@ -28,6 +28,7 @@ interface Garden {
 const PublicProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [gardens, setGardens] = useState<Garden[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -82,13 +83,18 @@ const PublicProfile = () => {
         .single();
 
       setIsAdmin(!!data);
-    } catch (error) {
-      // Not an admin
-    }
+    } catch {}
   };
 
-  const handleMessageOwner = () => {
-    navigate('/messages', { state: { recipientId: id, recipientName: profile?.full_name } });
+  const handleSendEmail = () => {
+    if (!profile?.email) {
+      toast.error("Owner has no email");
+      return;
+    }
+
+    const mailto = `mailto:${profile.email}?subject=GardenSpace Inquiry&body=Hello ${profile.full_name},%0D%0A%0D%0AI’m interested in your garden.`;
+
+    window.location.href = mailto;
   };
 
   if (isLoading) {
@@ -119,7 +125,7 @@ const PublicProfile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container max-w-5xl mx-auto py-12 px-4">
         {/* Profile Header */}
         <Card className="mb-8">
@@ -130,19 +136,20 @@ const PublicProfile = () => {
                   {profile.full_name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              
+
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-bold">{profile.full_name}</h1>
                   {isAdmin && <Badge>Garden Owner</Badge>}
                 </div>
+
                 <div className="flex items-center gap-2 text-muted-foreground mb-4">
                   <Mail className="h-4 w-4" />
                   <span>{profile.email}</span>
                 </div>
-                <Button onClick={handleMessageOwner} className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  Send Message
+
+                <Button onClick={handleSendEmail} className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" /> Send Email
                 </Button>
               </div>
             </div>
@@ -155,6 +162,7 @@ const PublicProfile = () => {
             <CardHeader>
               <CardTitle>Gardens by {profile.full_name}</CardTitle>
             </CardHeader>
+
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {gardens.map((garden) => (
@@ -176,16 +184,20 @@ const PublicProfile = () => {
                         </div>
                       )}
                     </div>
+
                     <CardContent className="pt-4">
                       <h3 className="font-semibold text-lg mb-2">{garden.name}</h3>
+
                       <p className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
                         <MapPin className="h-3 w-3" />
                         {garden.address}
                       </p>
+
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">
                           {garden.available_plots} plots available
                         </span>
+
                         <span className="font-semibold text-primary flex items-center gap-1">
                           <Euro className="h-4 w-4" />
                           {garden.base_price_per_month}/mo
